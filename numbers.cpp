@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <time.h> 
 using namespace std;
+
+//Jakub Drożdż 2021
+
 bool check_unique(int tab[],int rozm,int x){
     for(int i=0;i<rozm;i++){
         if(tab[i]==x) return false;
