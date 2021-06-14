@@ -6,222 +6,178 @@ using namespace std;
 
 //Jakub Drożdż 2021
 
-bool check_unique(int tab[],int rozm,int x){
-    for(int i=0;i<rozm;i++){
-        if(tab[i]==x) return false;
+bool check_unique(int arr[],int size,int x){
+    for(int i=0;i<size;i++){
+        if(arr[i]==x) return false;
     }
     return true;
 }
-void rand_tab(int tab[]){
-    int rozm=0;
-    for(int i=0;i<24;i++){
+
+void rand_tab(int arr[],int size){
+    int cur_size=0;
+    for(int i=0;i<size;i++){
         int x=1+rand()%(24+1-1);
-        rozm++;
-        if(check_unique(tab,rozm,x)==true){
-            tab[i]=x;
+        cur_size++;
+        if(check_unique(arr,cur_size,x)==true){
+            arr[i]=x;
         }
         else{
             i--;
-            rozm--;
+            cur_size--;
         }
     }
 }
-void show_tab(int tab[],int rozm){
-    for(int i=0;i<rozm;i++){
-        cout<<tab[i]<<"\t";
+
+void show_tab(int arr[],int size){
+    for(int i=0;i<size;i++){
+        cout<<arr[i]<<"\t";
     }
     cout<<endl;
 }
-void div_four(int tab_24[],int tab_1[],int tab_2[],int tab_3[],int tab_4[]){
-    int a=0,b=0,c=0,d=0;
-    for(int i=0;i<24;i++){
-        if(i==0||i==4||i==8||i==12||i==16||i==20){
-            tab_1[a]=tab_24[i];
-            a++;
-        }
-        if(i==1||i==5||i==9||i==13||i==17||i==21){
-            tab_2[b]=tab_24[i];
-            b++;
-        }
-        if(i==2||i==6||i==10||i==14||i==18||i==22){
-            tab_3[c]=tab_24[i];
-            c++;
-        }
-        if(i==3||i==7||i==11||i==15||i==19||i==23){
-            tab_4[d]=tab_24[i];
-            d++;
-        }
+
+void allocate(int arr_24[],int arr[],int amount,int j,int counter){
+    for(int i=0;i<amount;i++){
+        arr[i]=arr_24[j];
+        j+=counter;
     }
 }
-void div_three(int tab_24[],int t_1[],int t_2[],int t_3[]){
-    int a=0,b=0,c=0;
-    for(int i=0;i<24;i++){
-        if(i==0||i==3||i==6||i==9||i==12||i==15||i==18||i==21){
-            t_1[a]=tab_24[i];
-            a++;
-        }
-        if(i==1||i==4||i==7||i==10||i==13||i==16||i==19||i==22){
-            t_2[b]=tab_24[i];
-            b++;
-        }
-        if(i==2||i==5||i==8||i==11||i==14||i==17||i==20||i==23){
-            t_3[c]=tab_24[i];
-            c++;
-        }
+
+int* divide_arr(int arr_24[],int amount,int array_n){
+    static int t1[12],t2[12],t3[12],t4[12];
+    int counter=(24/amount);
+    int j=0;
+    if(array_n==1){
+        allocate(arr_24,t1,amount,j,counter);
+        return t1;
+    }
+    if(array_n==2){
+        j=1;
+        allocate(arr_24,t2,amount,j,counter);
+        return t2;
+    }
+    if(array_n==3){
+        j=2;
+        allocate(arr_24,t3,amount,j,counter);
+        return t3;
+    }
+    if(array_n==4){
+        j=3;
+        allocate(arr_24,t4,amount,j,counter);
+        return t4;
     }
 }
-void div_two(int tab_24[],int t1[],int t2[]){
-    int a=0,b=0;
-    for(int i=0;i<24;i++){
-        if(i==0||i==2||i==4||i==6||i==8||i==10||i==12||i==14||i==16||i==18||i==20||i==22){
-            t1[a]=tab_24[i];
-            a++;
-        }
-        if(i==1||i==3||i==5||i==7||i==9||i==11||i==13||i==15||i==17||i==19||i==21||i==23){
-            t2[b]=tab_24[i];
-            b++;
-        }
-    }
-}
-void reverse_tab(int tab[],int rozm){
-    int x=rozm-1;
-    for(int i=0;i<rozm;i++){
+
+void reverse_array(int arr[],int size){
+    int x=size-1;
+    for(int i=0;i<size;i++){
         if(i!=x){
-            int temp=tab[i];
-            tab[i]=tab[x];
-            tab[x]=temp;
+            int temp=arr[i];
+            arr[i]=arr[x];
+            arr[x]=temp;
             x--;
         }
         if(i==x||i==x-1) break;
     }
 }
-bool first_check(int tab[],int rozm){
-    cout<<"Czy jest w: \n";
-    for(int i=0;i<rozm;i++){
-        cout<<tab[i]<<"\t";
+
+bool first_check(int arr[],int size){
+    cout<<"Czy twoja liczbe znajduje się tutaj (y/n): \n";
+    for(int i=0;i<size;i++){
+        cout<<arr[i]<<"\t";
     }
     cout<<endl;
-    char znak;
-    cin>>znak;
-    if(znak!='y') return false;
+    char digit;
+    cin>>digit;
+    if(digit!='y') return false;
     return true;
 }
-void stack_tabs(int tab_24[],int tab[],int rozm,int pocz){
+
+int piece(int t1[],int t2[],int t3[],int t4[],int amount){
+    bool state=false;
+    int size = 24/amount;
+    state=first_check(t1,size);
+    if(state==false){
+        state=first_check(t2,size);
+        if(state==false&&amount>=3){
+            state=first_check(t3,size);
+            if(state==false&&amount>=4){
+                state=first_check(t4,size);
+                return 4;
+            }
+            return 3;
+        }
+        return 2;
+    }
+    return 1;
+}
+void stack_tabs(int arr_24[],int arr[],int size,int beg){
     int j=0;
-    for(int i=pocz;i<pocz+rozm;i++){
-        tab_24[i]=tab[j];
+    for(int i=beg;i<beg+size;i++){
+        arr_24[i]=arr[j];
         j++;
     }
 }
 
 int main(){
     srand(time(NULL));
-    int tab_24[24];
-    rand_tab(tab_24);
+    int arr_24[24];
+    rand_tab(arr_24,24);
     cout<<"Wybierz swoją liczbę"<<endl;
-    show_tab(tab_24,24);
-    int tab_1[6],tab_2[6],tab_3[6],tab_4[6];
-    div_four(tab_24,tab_1,tab_2,tab_3,tab_4);
-    reverse_tab(tab_1,6);
-    reverse_tab(tab_2,6);
-    reverse_tab(tab_3,6);
-    reverse_tab(tab_4,6);
+    show_tab(arr_24,24);
+
+    //POINTERS TO ARRAYS
+    int* t1=divide_arr(arr_24,6,1);int* t2=divide_arr(arr_24,6,2);int* t3=divide_arr(arr_24,6,3);int* t4=divide_arr(arr_24,6,4);
+
+    //REVERSE ARRAYS
+    reverse_array(t1,6);reverse_array(t2,6);reverse_array(t3,6);reverse_array(t4,6);
+
     int num=1;
-    bool state=false;
-    state=first_check(tab_1,6);
-    if(state==false){
-        state=first_check(tab_2,6);
-        num=2;
-        if(state==false){
-            state=first_check(tab_3,6);
-            num=3;
-            if(state==false){
-                num=4;
-                state=first_check(tab_4,6);
-            }
-        }
-    }
+    num=piece(t1,t2,t3,t4,4);
 
     if(num==1){
-        stack_tabs(tab_24,tab_1,6,0);
-        stack_tabs(tab_24,tab_2,6,6);
-        stack_tabs(tab_24,tab_3,6,12);
-        stack_tabs(tab_24,tab_4,6,18);
+        stack_tabs(arr_24,t1,6,0);stack_tabs(arr_24,t2,6,6);stack_tabs(arr_24,t3,6,12);stack_tabs(arr_24,t4,6,18);
     }
     if(num==2){
-        stack_tabs(tab_24,tab_2,6,0);
-        stack_tabs(tab_24,tab_3,6,6);
-        stack_tabs(tab_24,tab_4,6,12);
-        stack_tabs(tab_24,tab_1,6,18);
+        stack_tabs(arr_24,t2,6,0);stack_tabs(arr_24,t3,6,6);stack_tabs(arr_24,t4,6,12);stack_tabs(arr_24,t1,6,18);
     }
     if(num==3){
-        stack_tabs(tab_24,tab_3,6,0);
-        stack_tabs(tab_24,tab_4,6,6);
-        stack_tabs(tab_24,tab_1,6,12);
-        stack_tabs(tab_24,tab_2,6,18);
+        stack_tabs(arr_24,t3,6,0);stack_tabs(arr_24,t4,6,6);stack_tabs(arr_24,t1,6,12);stack_tabs(arr_24,t2,6,18);
     }
     if(num==4){
-        stack_tabs(tab_24,tab_4,6,0);
-        stack_tabs(tab_24,tab_1,6,6);
-        stack_tabs(tab_24,tab_2,6,12);
-        stack_tabs(tab_24,tab_3,6,18);
+        stack_tabs(arr_24,t4,6,0);stack_tabs(arr_24,t1,6,6);stack_tabs(arr_24,t2,6,12);stack_tabs(arr_24,t3,6,18);
     }
 
     cout<<endl;
-    int t_1[8],t_2[8],t_3[8];
-    div_three(tab_24,t_1,t_2,t_3);
-    reverse_tab(t_1,8);
-    reverse_tab(t_2,8);
-    reverse_tab(t_3,8);
-    num=1;
-    state=false;
-    state=first_check(t_1,8);
-    if(state==false){
-        state=first_check(t_2,8);
-        num=2;
-        if(state==false){
-            num=3;
-            state=first_check(t_3,8);
-        }
-    }
+
+    t1=divide_arr(arr_24,8,1);t2=divide_arr(arr_24,8,2);t3=divide_arr(arr_24,8,3);
+    reverse_array(t1,8);reverse_array(t2,8);reverse_array(t3,8);
+
+    num=piece(t1,t2,t3,t4,3);
 
     if(num==1){
-        stack_tabs(tab_24,t_1,8,0);
-        stack_tabs(tab_24,t_2,8,8);
-        stack_tabs(tab_24,t_3,8,16);
+        stack_tabs(arr_24,t1,8,0);stack_tabs(arr_24,t2,8,8);stack_tabs(arr_24,t3,8,16);
     }
     if(num==2){
-        stack_tabs(tab_24,t_2,8,0);
-        stack_tabs(tab_24,t_3,8,8);
-        stack_tabs(tab_24,t_1,8,16);
+        stack_tabs(arr_24,t2,8,0);stack_tabs(arr_24,t3,8,8);stack_tabs(arr_24,t1,8,16);
     }
     if(num==3){
-        stack_tabs(tab_24,t_3,8,0);
-        stack_tabs(tab_24,t_1,8,8);
-        stack_tabs(tab_24,t_2,8,16);
+        stack_tabs(arr_24,t3,8,0);stack_tabs(arr_24,t1,8,8);stack_tabs(arr_24,t2,8,16);
     }
 
     cout<<endl;
-    int t1[12],t2[12];
-    div_two(tab_24,t1,t2);
-    reverse_tab(t1,12);
-    reverse_tab(t2,12);
-    num=1;
-    state=false;
-    state=first_check(t1,12);
-    if(state==false){
-        num=2;
-        state=first_check(t2,12);
-    }
+
+    t1=divide_arr(arr_24,12,1);t2=divide_arr(arr_24,12,2);
+    reverse_array(t1,12);reverse_array(t2,12);
+
+    num=piece(t1,t2,t3,t4,2);
 
     if(num==1){
-        stack_tabs(tab_24,t1,12,0);
-        stack_tabs(tab_24,t2,12,12);
+        stack_tabs(arr_24,t1,12,0);stack_tabs(arr_24,t2,12,12);
     }
     if(num==2){
-        stack_tabs(tab_24,t2,12,0);
-        stack_tabs(tab_24,t1,12,12);
+        stack_tabs(arr_24,t2,12,0);stack_tabs(arr_24,t1,12,12);
     }
-    cout<<"Twoja liczba to: "<<tab_24[8]<<endl;
+    
+    cout<<"Twoja liczba to: "<<arr_24[8]<<endl;
     return 0;
 }
